@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pcap", "pcap\pcap.csproj", "{2C6FEC63-772D-4F85-A8F9-18DFB85E6F6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests", "tests\tests.csproj", "{98CA0E42-F567-4955-BEBF-20CF80EDF3BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "catcher", "catcher\catcher.csproj", "{74F9B3B4-4D08-4851-B8F6-D471C9062042}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C6FEC63-772D-4F85-A8F9-18DFB85E6F6E}.Debug|x86.ActiveCfg = Debug|x86
+		{2C6FEC63-772D-4F85-A8F9-18DFB85E6F6E}.Debug|x86.Build.0 = Debug|x86
+		{2C6FEC63-772D-4F85-A8F9-18DFB85E6F6E}.Release|x86.ActiveCfg = Release|x86
+		{2C6FEC63-772D-4F85-A8F9-18DFB85E6F6E}.Release|x86.Build.0 = Release|x86
+		{74F9B3B4-4D08-4851-B8F6-D471C9062042}.Debug|x86.ActiveCfg = Debug|x86
+		{74F9B3B4-4D08-4851-B8F6-D471C9062042}.Debug|x86.Build.0 = Debug|x86
+		{74F9B3B4-4D08-4851-B8F6-D471C9062042}.Release|x86.ActiveCfg = Release|x86
+		{74F9B3B4-4D08-4851-B8F6-D471C9062042}.Release|x86.Build.0 = Release|x86
+		{98CA0E42-F567-4955-BEBF-20CF80EDF3BA}.Debug|x86.ActiveCfg = Debug|x86
+		{98CA0E42-F567-4955-BEBF-20CF80EDF3BA}.Debug|x86.Build.0 = Debug|x86
+		{98CA0E42-F567-4955-BEBF-20CF80EDF3BA}.Release|x86.ActiveCfg = Release|x86
+		{98CA0E42-F567-4955-BEBF-20CF80EDF3BA}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = catcher\catcher.csproj
+	EndGlobalSection
+EndGlobal
