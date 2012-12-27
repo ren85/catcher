@@ -7,7 +7,7 @@ namespace pcap
 {
 	public class Utils
 	{
-		public static string UnGZip(byte[] byteArray)
+		public static string UnGZip(byte[] byteArray, Encoding Enc)
 		{
 			try
 			{
@@ -16,7 +16,7 @@ namespace pcap
 				using (MemoryStream bigStreamOut = new MemoryStream())
 				{
 						bigStream.CopyTo(bigStreamOut);
-						return Encoding.UTF8.GetString(bigStreamOut.ToArray());
+						return Enc.GetString(bigStreamOut.ToArray());
 
 				}
 			}
@@ -27,13 +27,13 @@ namespace pcap
 		}
 		
 			
-		public static string DefalteUnzip(byte[] input)
+		public static string DeflateUnzip(byte[] input, Encoding Enc)
 		{
 			try
 			{
 				using (MemoryStream inputStream = new MemoryStream(input))
 				using (DeflateStream gzip = new DeflateStream(inputStream, CompressionMode.Decompress))
-				using (StreamReader reader = new StreamReader(gzip, System.Text.Encoding.UTF8))
+				using (StreamReader reader = new StreamReader(gzip, Enc))
 				{
 					return reader.ReadToEnd();
 				}

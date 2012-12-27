@@ -62,6 +62,12 @@ namespace pcap
 			int headers_size = System.Text.Encoding.UTF8.GetBytes (headers + "\r\n\r\n").Length;
 			Body_Bytes = new List<byte> (bytes.Skip (headers_size));
 
+			
+			if(IsChunked && !_is_chunked_completed)
+			{
+				WorkOnChunk(Body_Bytes);
+			}
+
 			if(Packets_added)
 				RaiseBytesAdded();
 
@@ -69,12 +75,6 @@ namespace pcap
 				RaiseNewRequest();
 			if(Headers != null && !IsRequest && is_new)
 				RaiseNewResponse();
-
-			/*if(IsChunked && !_is_chunked_completed)
-			{
-				List<byte> completed = new List<byte>();
-				WorkOnChunk(completed, Body_Bytes);
-			}*/
 
 			Packets_added = false;
 		}
@@ -231,51 +231,81 @@ namespace pcap
 				
 				if(_is_chunked_completed)
 					return true;
-				
-				List<byte> completed = new List<byte>();
-				return WorkOnChunk(completed, Body_Bytes);
+
+				return WorkOnChunk(Body_Bytes);
 			}
 		}
 		
-		bool WorkOnChunk(List<byte> completed, List<byte> bb)
+		bool WorkOnChunk(List<byte> bb)
 		{
-
-			string body = Encoding.UTF8.GetString(bb.ToArray());
-			if(!body.Contains("\n"))
-				return false;
-			
-			var line = body.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)[0];
-			var s = line.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)[0];
-			int size = Convert.ToInt32(s, 16);
-
-			int l = Encoding.UTF8.GetBytes(body.Substring(0, body.IndexOf("\n")+1)).Length;
-			bb = new List<byte>(bb.Skip(l));
-			
-			if(size == 0)
-			{
-				if(bb.Count() > 0)
-				{
-					string after_headers = Encoding.UTF8.GetString(bb.ToArray());
-					if(!after_headers.EndsWith("\r\n"))
-						return false;
-					
-					if(after_headers != "\r\n")
-						Headers_String = Headers_String+"\r\n"+after_headers;
-				}
-				_is_chunked_completed = true;
-				Body_Bytes = completed;
+			if(_is_chunked_completed)
 				return true;
-			}
-			else
+
+			byte[] nlb = Enc.GetBytes("\r\n");
+			string body = Enc.GetString(bb.ToArray());
+			if(!body.Contains("\r\n0\r\n"))
+				return false;
+
+			var line = new String(body.Take(body.IndexOf("\r\n")).ToArray());
+			var s = line.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)[0];
+			int size = Convert.ToInt32(s.Trim(), 16);
+
+			int skip = Enc.GetBytes(line).Length+nlb.Length;
+			bb = new List<byte>(bb.Skip(skip));
+
+			List<byte> completed = new List<byte>();
+			while(true)
 			{
-				if(bb.Count() < size+Encoding.UTF8.GetBytes("\r\n").Length)
-					return false;
+				if(size == 0)
+				{
+					if(bb.Count() > 0)
+					{
+						string after_headers = Enc.GetString(bb.ToArray());
+						if(!after_headers.EndsWith("\r\n"))
+							return false;
+						
+						if(after_headers != "\r\n")
+							Headers_String = Headers_String+"\r\n"+after_headers;
+					}
+					_is_chunked_completed = true;
+					Body_Bytes = completed;
+					return true;
+				}
 				completed.AddRange(bb.Take(size));
-				bb = new List<byte>(bb.Skip(size+Encoding.UTF8.GetBytes("\r\n").Length));
-				return WorkOnChunk(completed, bb);
+				bb = bb.Skip(size+nlb.Length).ToList();
+				int i;
+				for(i=0; i<bb.Count()-1; i++)
+					if(bb[i] == nlb[0] && bb[i+1] == nlb[1])
+					{
+						try
+						{
+							size = Convert.ToInt32(Enc.GetString(bb.Take(i).ToArray()).Trim(), 16);
+						}
+						catch(Exception )
+						{
+							Console.WriteLine(Enc.GetString (completed.ToArray()));
+						}
+						bb = bb.Skip(i+2).ToList();
+						i=0;
+						break;
+					}
+				if(i != 0)
+					return false;
 			}
 		}		
-		
+
+		public Encoding Enc
+		{
+			get
+			{			
+				var h = Headers.FirstOrDefault(f => f.Item1.ToLower().Trim() == "content-type");
+				if(h == null || !h.Item2.Contains("charset"))
+					return Encoding.UTF8;
+				var p = h.Item2.Split(";".ToCharArray());
+				var charset = p.FirstOrDefault(f => f.Contains("charset")).Split("=".ToCharArray())[1].Trim().ToLower();
+				return Encoding.GetEncoding(charset);
+			}
+		}
 		public Zipping Zipping { get; set; }
 
 		public string Unzipped_Body 
@@ -284,11 +314,11 @@ namespace pcap
 			{				
 				if(Zipping == Zipping.Gzip)
 				{
-					return  Utils.UnGZip(Body_Bytes.ToArray());
+					return  Utils.UnGZip(Body_Bytes.ToArray(), Enc);
 				}
 				else if(Zipping == Zipping.Deflate)
 				{
-					return Utils.DefalteUnzip(Body_Bytes.ToArray());
+					return Utils.DeflateUnzip(Body_Bytes.ToArray(), Enc);
 				}
 				else
 				{
@@ -306,7 +336,7 @@ namespace pcap
 				if(_last_length == Body_Bytes.Count())
 					return _cached_string;
 
-				_cached_string = Encoding.UTF8.GetString(Body_Bytes.ToArray());
+				_cached_string = Enc.GetString(Body_Bytes.ToArray());
 				_last_length = Body_Bytes.Count();
 				return _cached_string;
 			}

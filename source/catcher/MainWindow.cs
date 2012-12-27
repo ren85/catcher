@@ -7,6 +7,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
 using Pango;
+using System.IO;
 
 class ItemModel
 {
@@ -200,7 +201,15 @@ public partial class MainWindow: Gtk.Window
 	{
 		try 
 		{
-			capture.StartCapturing(0);
+			int device = 0;
+			if(File.Exists("params.txt"))
+			{
+				var p = new List<string>(File.ReadAllLines("params.txt"));
+				var d = p.FirstOrDefault(f => f.Trim().ToLower().StartsWith("device_number"));
+				if(d != null)
+					device = Convert.ToInt32(d.Split(new string[] {"=>"}, StringSplitOptions.RemoveEmptyEntries)[1]);
+			}
+			capture.StartCapturing(device);
 		} 
 		catch (Exception ex) 
 		{

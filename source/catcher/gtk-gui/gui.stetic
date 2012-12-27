@@ -7,7 +7,6 @@
   <import>
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <widget-library name="../bin/Debug/catcher.exe" internal="true" />
-    <widget-library name="../../../monodevelop-3.0.5/build/AddIns/MonoDevelop.GtkCore/libstetic.dll" />
   </import>
   <widget class="Gtk.Window" id="MainWindow" design-size="867 652">
     <action-group name="Default" />
