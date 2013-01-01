@@ -6,7 +6,7 @@
   </configuration>
   <import>
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <widget-library name="../bin/Release/catcher.exe" internal="true" />
+    <widget-library name="../bin/Debug/catcher.exe" internal="true" />
   </import>
   <icon-factory>
     <icon-set id="question">
