@@ -171,6 +171,14 @@ public partial class MainWindow: Gtk.Window
 				Url = request.Url,
 				RequestText = request.First_Line+ "\n" + request.Headers_String+"\n\n"+request.Body_String
 			};
+
+			request.OnBytesAdded += () => 
+			{
+				lock(_lock)
+				{
+					item.RequestText = request.First_Line+ "\n" + request.Headers_String+"\n\n"+request.Body_String;
+				}
+			};	
 			lock(_lock)
 			{
 				items.Add(item);
