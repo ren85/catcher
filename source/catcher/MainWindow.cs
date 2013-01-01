@@ -12,7 +12,7 @@ using System.IO;
 class ItemModel
 {
 	public string Number { get; set; }
-	public string Status { get; set; }
+	/*public string Status { get; set; }*/
 	public string Protocol { get; set; }
 	public string Host { get; set; }
 	public string Url { get; set; }
@@ -20,11 +20,13 @@ class ItemModel
 	public Pair Pair { get; set; }
 	public string RequestText { get; set; }
 	public string ResponseText { get; set; }
+	public List<byte> RequestBody { get; set; }
+	public List<byte> ResponseBody { get; set; } 
 }
 
 class ItemsView : MyListView<ItemModel>
 {
-	public ItemsView () : base("#", "Status", "Protocol", "Host", "Url")
+	public ItemsView () : base("#", /*"Status",*/ "Protocol", "Host", "Url")
 	{
 	}
 	
@@ -37,16 +39,16 @@ class ItemsView : MyListView<ItemModel>
 			case 0:
 				render.Text = item.Number;
 				break;
-			case 1:
+			/*case 1:
 				render.Text = item.Status;
-				break;
-			case 2:
+				break;*/
+			case 1:
 				render.Text = item.Protocol;
 				break;
-			case 3:
+			case 2:
 				render.Text = item.Host;
 				break;
-			case 4:
+			case 3:
 				render.Text = item.Url;
 				break;
 
@@ -71,19 +73,34 @@ public partial class MainWindow: Gtk.Window
 		view = new ItemsView();
 		view.Reorderable = true;
 		view.Selection.Mode = SelectionMode.Multiple;
-		/*view.KeyPressEvent += (object o, KeyPressEventArgs args) => 
+
+		view.KeyPressEvent += (object o, KeyPressEventArgs args) => 
 		{
 			if (args.Event.Key == Gdk.Key.Delete)
 			{
 				var s_items = view.SelectedItems.ToList<ItemModel>();
-				foreach(var i in s_items)
+				List<long> ids = new List<long>();
+				if(s_items.Count > 0)
 				{
-					view.RemoveItem(i);
-					items.Remove(i);
-					//Capturing.Pairs.Pairs[i.Index] = new Pair() {Request = new Request(), Response = new Response()};
+					textview1.Buffer.Text = "";
+					textview2.Buffer.Text = "";
+
+					lock(_lock)
+					{
+						selection_on = false;
+						foreach(ItemModel i in s_items)
+						{
+							view.RemoveItem(i);
+							items.Remove(i);
+							ids.Add(i.Pair.Id);
+						}
+						Capturing.RegisterRemovePairs(ids);
+						selection_on = true;
+					}
 				}
 			}
-		};*/
+		};
+
 		foreach(var column in view.Columns)
 			column.Reorderable = true;
 		listview1.Child = view;
@@ -100,24 +117,32 @@ public partial class MainWindow: Gtk.Window
 
 		view.ItemSelected += (ItemModel[] items) => 
 		{
-			lock(_lock)
+			if(selection_on)
 			{
-				if(items.Count() > 0)
+				lock(_lock)
 				{
-					if(!string.IsNullOrEmpty(items[0].RequestText))
-						textview1.Buffer.Text = items[0].RequestText;
+					if(items.Count() > 0)
+					{
+						if(!string.IsNullOrEmpty(items[0].RequestText))
+							textview1.Buffer.Text = items[0].RequestText;
+						else
+							textview1.Buffer.Text = "";
+						if(!string.IsNullOrEmpty(items[0].ResponseText))
+							textview2.Buffer.Text = items[0].ResponseText;
+						else
+							textview2.Buffer.Text = "";
+					}
 					else
+					{
 						textview1.Buffer.Text = "";
-					if(!string.IsNullOrEmpty(items[0].ResponseText))
-						textview2.Buffer.Text = items[0].ResponseText;
-					else
 						textview2.Buffer.Text = "";
+					}
+					SelectedItem = items[0];
 				}
-				else
-				{
-					textview1.Buffer.Text = "";
-					textview2.Buffer.Text = "";
-				}
+			}
+			else
+			{
+				SelectedItem = null;
 			}
 		};
 
@@ -125,6 +150,12 @@ public partial class MainWindow: Gtk.Window
 		StartCapturing();
 	}
 
+	bool selection_on = true;
+	ItemModel SelectedItem
+	{
+		get;
+		set;
+	}
 	void StartCapturing()
 	{
 		capture = new Capturing ();
@@ -150,20 +181,18 @@ public partial class MainWindow: Gtk.Window
 		Tcp_packets_holder.Pairs.OnNewResponse += (pair) => 
 		{
 			var response = pair.Response;
-			if(response.IsCompleted)
+			if(response.Headers_String != null)
 			{
 				OnResponseReady(pair);
 			}
-			else
+
+			response.OnBytesAdded += () => 
 			{
-				response.OnBytesAdded += () => 
+				if(response.Headers_String != null)
 				{
-					if(response.Headers_String != null)
-					{
-						OnResponseReady(pair);
-					}
-				};	
-			}
+					OnResponseReady(pair);
+				}
+			};	
 		};
 		catcher.Utils.SetInterval(() => {
 			lock(_lock)
@@ -184,15 +213,30 @@ public partial class MainWindow: Gtk.Window
 	{
 		lock (_lock) 
 		{
-			var item = items.Single (f => f.Pair == pair);		
-			item.ResponseText = pair.Response.First_Line + "\n" + pair.Response.Headers_String + "\n\n" + pair.Response.Body_String;
-			if (pair.Response.Zipping != Zipping.None) 
-			{
-				item.ResponseText = pair.Response.First_Line + "\n" + pair.Response.Headers_String + "\n\n" + pair.Response.Unzipped_Body;
-			} 
-			else 
+			var item = items.FirstOrDefault (f => f.Pair == pair);		
+			if(item != null)
 			{
 				item.ResponseText = pair.Response.First_Line + "\n" + pair.Response.Headers_String + "\n\n" + pair.Response.Body_String;
+				if (pair.Response.Zipping != Zipping.None) 
+				{
+					item.ResponseText = pair.Response.First_Line + "\n" + pair.Response.Headers_String + "\n\n" + pair.Response.Unzipped_Body;
+				} 
+				else 
+				{
+					item.ResponseText = pair.Response.First_Line + "\n" + pair.Response.Headers_String + "\n\n" + pair.Response.Body_String;
+				}
+				if(pair.Request.Body_Bytes != null)
+				{
+					item.RequestBody = new List<byte>();
+					foreach(var b in pair.Request.Body_Bytes)
+						item.RequestBody.Add(b);
+				}
+				if(pair.Response.Body_Bytes != null)
+				{
+					item.ResponseBody = new List<byte>();
+					foreach(var b in pair.Response.Body_Bytes)
+						item.ResponseBody.Add(b);
+				}
 			}
 		}
 	}
@@ -213,9 +257,12 @@ public partial class MainWindow: Gtk.Window
 		} 
 		catch (Exception ex) 
 		{
-			Console.WriteLine("ERROR in capturing: Thread stopped: {0} \n {1}", 
-			                  ex.InnerException != null ? ex.InnerException.Message : ex.Message,
-			                  ex.InnerException != null ? ex.InnerException.StackTrace : ex.StackTrace);		
+			if(!(ex is ThreadAbortException))
+			{
+				Console.Error.WriteLine("ERROR in capturing: Thread stopped: {0} \n {1}", 
+						                 ex.InnerException != null ? ex.InnerException.Message : ex.Message,
+						                 ex.InnerException != null ? ex.InnerException.StackTrace : ex.StackTrace);	
+			}
 		}
 	}
 
@@ -224,11 +271,95 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
 	{
+		a.RetVal = true;
+		Exit();
+	}
+
+	void Exit()
+	{
 		capture.StopCapturing ();
 		t.Abort ();
 		Tcp_packets_holder.StopWorking();
 		Application.Quit ();
-		a.RetVal = true;
 	}
 
+	protected void OnSaveRequestBodyActionActivated (object sender, EventArgs e)
+	{
+		if(SelectedItem != null)
+		{
+			string file_path = null;
+			using(FileChooserDialog fc= new FileChooserDialog("Choose the file to save to", this, FileChooserAction.Save, "Cancel", ResponseType.Cancel, "Save", ResponseType.Accept))
+			{
+				fc.SetCurrentFolder(Directory.GetCurrentDirectory());
+				if (fc.Run() == (int)ResponseType.Accept) 
+				{
+					file_path = fc.Filename;
+				}
+				else
+				{
+					file_path = null;
+				}
+				fc.Destroy();
+			}
+
+			if(file_path != null)
+			{
+				byte[] array;
+				lock (_lock)
+				{
+					array = SelectedItem.RequestBody.ToArray();
+				}
+				File.WriteAllBytes(file_path, array);
+			}
+		}
+	}
+
+	protected void OnSaveResponseBodyActionActivated (object sender, EventArgs e)
+	{
+		if(SelectedItem != null)
+		{
+			string file_path = null;
+			using(FileChooserDialog fc= new FileChooserDialog("Choose the file to save to", this, FileChooserAction.Save, "Cancel", ResponseType.Cancel, "Save", ResponseType.Accept))
+			{
+				fc.SetCurrentFolder(Directory.GetCurrentDirectory());
+				if (fc.Run() == (int)ResponseType.Accept) 
+				{
+					file_path = fc.Filename;
+				}
+				else
+				{
+					file_path = null;
+				}
+				fc.Destroy();
+			}
+			
+			if(file_path != null)
+			{
+				byte[] array;
+				lock (_lock)
+				{
+					array = SelectedItem.ResponseBody.ToArray();
+				}
+				File.WriteAllBytes(file_path, array);
+			}
+		}
+	}
+
+	protected void OnAboutActionActivated (object sender, EventArgs e)
+	{
+		using(AboutDialog about = new AboutDialog())
+		{
+			about.ProgramName = "Catcher";
+			about.Copyright = "http packet viewer for linux, version 0.1 (2013-01-01)";
+			about.Website = "https://github.com/ren85/catcher";
+
+			about.Run();
+			about.Destroy();
+		}
+	}
+
+	protected void OnQuitActionActivated (object sender, EventArgs e)
+	{
+		Exit();
+	}
 }

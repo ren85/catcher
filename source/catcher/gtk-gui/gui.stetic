@@ -6,10 +6,83 @@
   </configuration>
   <import>
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <widget-library name="../bin/Debug/catcher.exe" internal="true" />
+    <widget-library name="../bin/Release/catcher.exe" internal="true" />
   </import>
+  <icon-factory>
+    <icon-set id="question">
+      <source>
+        <property name="Image">stock:gtk-dialog-question Menu</property>
+      </source>
+    </icon-set>
+    <icon-set id="save">
+      <source>
+        <property name="Image">stock:gtk-floppy Menu</property>
+      </source>
+    </icon-set>
+    <icon-set id="quit">
+      <source>
+        <property name="Image">stock:gtk-quit Menu</property>
+      </source>
+    </icon-set>
+  </icon-factory>
   <widget class="Gtk.Window" id="MainWindow" design-size="867 652">
-    <action-group name="Default" />
+    <action-group name="Default">
+      <action id="FileAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">File</property>
+        <property name="ShortLabel" translatable="yes">File</property>
+      </action>
+      <action id="AboutAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">About</property>
+        <property name="ShortLabel" translatable="yes">About</property>
+      </action>
+      <action id="FileAction1">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">File</property>
+        <property name="ShortLabel" translatable="yes">File</property>
+      </action>
+      <action id="HelpAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Help</property>
+        <property name="ShortLabel" translatable="yes">Help</property>
+      </action>
+      <action id="floppyAction">
+        <property name="Type">Action</property>
+        <property name="Accelerator">&lt;Primary&gt;&lt;Mod2&gt;r</property>
+        <property name="Label" translatable="yes">Save request body</property>
+        <property name="ShortLabel" translatable="yes">Save request body</property>
+        <property name="StockId">gtk-floppy</property>
+        <signal name="Activated" handler="OnSaveRequestBodyActionActivated" after="yes" />
+      </action>
+      <action id="floppyAction1">
+        <property name="Type">Action</property>
+        <property name="Accelerator">&lt;Primary&gt;&lt;Mod2&gt;s</property>
+        <property name="Label" translatable="yes">Save response body</property>
+        <property name="ShortLabel" translatable="yes">Save response body</property>
+        <property name="StockId">gtk-floppy</property>
+        <signal name="Activated" handler="OnSaveResponseBodyActionActivated" after="yes" />
+      </action>
+      <action id="AboutAction1">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">About</property>
+        <property name="ShortLabel" translatable="yes">About</property>
+      </action>
+      <action id="quitAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Quit</property>
+        <property name="ShortLabel" translatable="yes">Exit</property>
+        <property name="StockId">gtk-quit</property>
+        <signal name="Activated" handler="OnQuitActionActivated" />
+      </action>
+      <action id="helpAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">About</property>
+        <property name="ShortLabel" translatable="yes">About</property>
+        <property name="StockId">gtk-help</property>
+        <signal name="Activated" handler="OnAboutActionActivated" after="yes" />
+      </action>
+    </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">Catcher</property>
     <property name="Icon">file:./favicon.ico</property>
@@ -25,10 +98,15 @@
         <child>
           <widget class="Gtk.MenuBar" id="menubar1">
             <property name="MemberName" />
-            <node name="menubar1" type="Menubar">
-              <node type="Menu" />
-              <node type="Menu" />
-              <node type="Menu" />
+            <node name="__gtksharp_118_Stetic_Editor_ActionMenuBar" type="Menubar">
+              <node type="Menu" action="FileAction1">
+                <node type="Menuitem" action="floppyAction" />
+                <node type="Menuitem" action="floppyAction1" />
+                <node type="Menuitem" action="quitAction" />
+              </node>
+              <node type="Menu" action="HelpAction">
+                <node type="Menuitem" action="helpAction" />
+              </node>
             </node>
           </widget>
           <packing>

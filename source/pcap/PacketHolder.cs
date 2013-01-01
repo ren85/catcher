@@ -30,7 +30,7 @@ namespace pcap
 		public static List<Packet> Working_copy = new List<Packet>();
 		
 		public static ListOfPairs Pairs = new ListOfPairs(); 
-		
+
 		public static void WorkOnPackets()
 		{				
 			try
@@ -44,31 +44,11 @@ namespace pcap
 							Working_copy.Add(p);
 						Packets = new List<Packet>();
 					}
+					//Working_copy = Working_copy.OrderBy(f => f.Tcp.SequenceNumber).ToList();
 					foreach(var p in Working_copy)
 					{
-						var req = Pairs.Pairs.LastOrDefault(f =>  f.Request.IpInfo.Dest_Ip == p.Ip.DestinationAddress.ToString() && 
-								                                  f.Request.IpInfo.Dest_Port == p.Tcp.DestinationPort.ToString() &&
-								                                  f.Request.IpInfo.Source_Ip == p.Ip.SourceAddress.ToString() &&
-								                                  f.Request.IpInfo.Source_Port == p.Tcp.SourcePort.ToString() && 
-								                                  f.Response == null);
-						if(req != null)
-						{
-							req.Request.AddTcpPacket(p.Tcp);
-							continue;
-						}
-						
-						var res = Pairs.Pairs.LastOrDefault(f =>  f.Response != null &&
-								                                  f.Response.IpInfo.Dest_Ip == p.Ip.DestinationAddress.ToString() && 
-								                                  f.Response.IpInfo.Dest_Port == p.Tcp.DestinationPort.ToString() &&
-								                                  f.Response.IpInfo.Source_Ip == p.Ip.SourceAddress.ToString() &&
-								                                  f.Response.IpInfo.Source_Port == p.Tcp.SourcePort.ToString() && 
-								                                  !f.Response._is_completed);
-						if(res != null)
-						{
-							res.Response.AddTcpPacket(p.Tcp);
-							continue;
-						}
-						
+
+
 						var s = Encoding.UTF8.GetString(p.Tcp.PayloadData);
 						if (s.StartsWith ("GET") || s.StartsWith ("POST") || 
 						    s.StartsWith ("HEAD") || s.StartsWith ("PUT") || 
@@ -85,7 +65,8 @@ namespace pcap
 									Dest_Ip = p.Ip.DestinationAddress.ToString(),
 									Dest_Port = p.Tcp.DestinationPort.ToString()
 								},
-								IsRequest = true
+								IsRequest = true,
+								Next_sequence_number = p.Tcp.SequenceNumber
 							};
 							Pairs.AddRequest(en);
 							en.AddTcpPacket(p.Tcp);
@@ -101,10 +82,87 @@ namespace pcap
 									Dest_Ip = p.Ip.DestinationAddress.ToString(),
 									Dest_Port = p.Tcp.DestinationPort.ToString()
 								},
-								IsRequest = false
+								IsRequest = false,
+								Next_sequence_number = p.Tcp.SequenceNumber
 							};
-							Pairs.AddResponse(en);
+							Pairs.AddResponse(en, s);
 							en.AddTcpPacket(p.Tcp);
+						}
+						else
+						{
+							var any = Pairs.Pairs.LastOrDefault(f => f.Response == null && /*!f.Request._is_completed &&*/
+								                                     f.Request.Next_sequence_number == p.Tcp.SequenceNumber &&
+								                                     f.Request.IpInfo.Source_Ip == p.Ip.SourceAddress.ToString() &&
+								                                     f.Request.IpInfo.Source_Port == p.Tcp.SourcePort.ToString() &&
+								                                     f.Request.IpInfo.Dest_Ip == p.Ip.DestinationAddress.ToString() &&
+								                                     f.Request.IpInfo.Dest_Port == p.Tcp.DestinationPort.ToString());
+							if(any != null && any.Request.Length <= Utils.MaxSizeInBytes)
+							{
+								any.Request.AddTcpPacket(p.Tcp);
+								continue;
+							}
+							any = Pairs.Pairs.LastOrDefault(f => f.Response != null && /*!f.Response._is_completed &&*/ 
+								                                 f.Response.Next_sequence_number == p.Tcp.SequenceNumber &&
+								                                 f.Response.IpInfo.Source_Ip == p.Ip.SourceAddress.ToString() &&
+								                                 f.Response.IpInfo.Source_Port == p.Tcp.SourcePort.ToString() &&
+								                                 f.Response.IpInfo.Dest_Ip == p.Ip.DestinationAddress.ToString() &&
+								                                 f.Response.IpInfo.Dest_Port == p.Tcp.DestinationPort.ToString());
+							if(any != null && any.Response.Length <= Utils.MaxSizeInBytes)
+							{
+								any.Response.AddTcpPacket(p.Tcp);
+								continue;
+							}
+
+							int c = 500;
+							any = Pairs.Pairs.LastOrDefault(f => f.Response == null && /*!f.Request._is_completed &&*/
+							                                	 f.Request.Next_sequence_number - p.Tcp.WindowSize*c < p.Tcp.SequenceNumber &&
+							                                	 f.Request.Next_sequence_number + p.Tcp.WindowSize*c > p.Tcp.SequenceNumber &&
+								                                 f.Request.IpInfo.Source_Ip == p.Ip.SourceAddress.ToString() &&
+								                                 f.Request.IpInfo.Source_Port == p.Tcp.SourcePort.ToString() &&
+								                                 f.Request.IpInfo.Dest_Ip == p.Ip.DestinationAddress.ToString() &&
+								                                 f.Request.IpInfo.Dest_Port == p.Tcp.DestinationPort.ToString());
+							if(any != null && any.Request.Length <= Utils.MaxSizeInBytes)
+							{
+								any.Request.AddTcpPacket(p.Tcp);
+								continue;
+							}
+							any = Pairs.Pairs.LastOrDefault(f => f.Response != null && /*!f.Response._is_completed &&*/
+								                                 f.Response.Next_sequence_number - p.Tcp.WindowSize*c < p.Tcp.SequenceNumber &&
+							                                	 f.Response.Next_sequence_number + p.Tcp.WindowSize*c > p.Tcp.SequenceNumber &&
+								                                 f.Response.IpInfo.Source_Ip == p.Ip.SourceAddress.ToString() &&
+								                                 f.Response.IpInfo.Source_Port == p.Tcp.SourcePort.ToString() &&
+								                                 f.Response.IpInfo.Dest_Ip == p.Ip.DestinationAddress.ToString() &&
+								                                 f.Response.IpInfo.Dest_Port == p.Tcp.DestinationPort.ToString());
+							if(any != null && any.Response.Length <= Utils.MaxSizeInBytes)
+							{
+								any.Response.AddTcpPacket(p.Tcp);
+								continue;
+							}
+
+
+							/*
+							var req = Pairs.Pairs.LastOrDefault(f =>  f.Request.IpInfo.Dest_Ip == p.Ip.DestinationAddress.ToString() && 
+									                                  f.Request.IpInfo.Dest_Port == p.Tcp.DestinationPort.ToString() &&
+									                                  f.Request.IpInfo.Source_Ip == p.Ip.SourceAddress.ToString() &&
+									                                  f.Request.IpInfo.Source_Port == p.Tcp.SourcePort.ToString() && 
+									                                  f.Response == null && !f.Request._is_completed);
+							if(req != null)
+							{
+								req.Request.AddTcpPacket(p.Tcp);
+								continue;
+							}
+							
+							var res = Pairs.Pairs.LastOrDefault(f =>  f.Response != null &&
+									                                  f.Response.IpInfo.Dest_Ip == p.Ip.DestinationAddress.ToString() && 
+									                                  f.Response.IpInfo.Dest_Port == p.Tcp.DestinationPort.ToString() &&
+									                                  f.Response.IpInfo.Source_Ip == p.Ip.SourceAddress.ToString() &&
+									                                  f.Response.IpInfo.Source_Port == p.Tcp.SourcePort.ToString() && 
+									                                  !f.Response._is_completed);
+							if(res != null)
+							{
+								res.Response.AddTcpPacket(p.Tcp);
+								continue;
+							}*/
 						}
 					}
 					
@@ -116,12 +174,17 @@ namespace pcap
 					{
 						r.Response.DoWorkOnPackets();
 					}
+
+					Capturing.RemovePairs();
 					Thread.Sleep(500);
 				}
 			}
 			catch(Exception e)
 			{
-				Console.Error.WriteLine("Working thread: {0}", e.InnerException != null ? e.InnerException.Message+"\n"+e.InnerException.StackTrace : e.Message+"\n"+e.StackTrace);
+				if(!(e is ThreadAbortException))
+				{
+					Console.Error.WriteLine("Working thread: {0}", e.InnerException != null ? e.InnerException.Message+"\n"+e.InnerException.StackTrace : e.Message+"\n"+e.StackTrace);				
+				}
 			}
 		}
 	}

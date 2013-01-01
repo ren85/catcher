@@ -1,29 +1,22 @@
 ﻿<Properties GitUserInfo="UsingGIT">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="pcap/Capturing.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="catcher/MainWindow.cs">
     <Files>
-      <File FileName="catcher/ListView.cs" Line="83" Column="3" />
-      <File FileName="catcher/MainWindow.cs" Line="152" Column="7" />
-      <File FileName="tests/Main.cs" Line="30" Column="59" />
-      <File FileName="pcap/Request.cs" Line="315" Column="21" />
-      <File FileName="pcap/Capturing.cs" Line="53" Column="37" />
-      <File FileName="catcher/Main.cs" Line="19" Column="1" />
-      <File FileName="pcap/Utils.cs" Line="18" Column="1" />
-      <File FileName="pcap/Capturing_api.cs" Line="7" Column="3" />
-      <File FileName="catcher/Utils.cs" Line="6" Column="3" />
-      <File FileName="pcap/ListOfPairs.cs" Line="45" Column="20" />
-      <File FileName="pcap/PacketHolder.cs" Line="113" Column="24" />
+      <File FileName="pcap/ListOfPairs.cs" Line="20" Column="4" />
+      <File FileName="pcap/PacketHolder.cs" Line="71" Column="19" />
+      <File FileName="pcap/Request.cs" Line="452" Column="14" />
+      <File FileName="pcap/Capturing.cs" Line="58" Column="33" />
+      <File FileName="pcap/Utils.cs" Line="28" Column="55" />
+      <File FileName="catcher/MainWindow.cs" Line="353" Column="70" />
+      <File FileName="catcher/Utils.cs" Line="7" Column="3" />
+      <File FileName="pcap/Capturing_api.cs" Line="38" Column="2" />
+      <File FileName="catcher/ListView.cs" Line="96" Column="3" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="catcher" expanded="True" />
-          <Node name="pcap" expanded="True">
-            <Node name="Capturing.cs" selected="True" />
-          </Node>
-          <Node name="tests" expanded="True">
-            <Node name="References" expanded="True" />
-          </Node>
+          <Node name="catcher" expanded="True" selected="True" />
+          <Node name="pcap" expanded="True" />
         </State>
       </Pad>
       <Pad Id="ClassPad">
@@ -35,13 +28,10 @@
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/home/ren/Desktop/pcap/pcap/Main.cs" line="95" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>
     <Watch file="pcap/Main.cs" line="117" offsetX="1014" offsetY="1904" expression="parts" liveUpdate="False" />
-    <Watch file="pcap/Utils.cs" line="13" offsetX="840" offsetY="216" expression="bigStream" liveUpdate="False" />
     <Watch file="pcap/Capturing.cs" line="117" offsetX="406" offsetY="1856" expression="Pairs" liveUpdate="False" />
   </MonoDevelop.Ide.DebuggingService.PinnedWatches>
 </Properties>

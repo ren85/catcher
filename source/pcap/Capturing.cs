@@ -56,7 +56,7 @@ namespace pcap
                 if(ip != null)
 				{
                     var tcp = PacketDotNet.TcpPacket.GetEncapsulated(packet);
-                    if (tcp != null && tcp.PayloadData != null && tcp.PayloadData.Count() > 0)
+                    if (tcp != null && tcp.PayloadData != null && tcp.PayloadData.Length > 0)
                     {
 						lock(Tcp_packets_holder._lock)
 						{

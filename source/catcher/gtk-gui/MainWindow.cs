@@ -4,6 +4,15 @@
 public partial class MainWindow
 {
 	private global::Gtk.UIManager UIManager;
+	private global::Gtk.Action FileAction;
+	private global::Gtk.Action AboutAction;
+	private global::Gtk.Action FileAction1;
+	private global::Gtk.Action HelpAction;
+	private global::Gtk.Action floppyAction;
+	private global::Gtk.Action floppyAction1;
+	private global::Gtk.Action AboutAction1;
+	private global::Gtk.Action quitAction;
+	private global::Gtk.Action helpAction;
 	private global::Gtk.VBox vbox1;
 	private global::Gtk.MenuBar menubar1;
 	private global::Gtk.HPaned hpaned1;
@@ -22,6 +31,33 @@ public partial class MainWindow
 		// Widget MainWindow
 		this.UIManager = new global::Gtk.UIManager ();
 		global::Gtk.ActionGroup w1 = new global::Gtk.ActionGroup ("Default");
+		this.FileAction = new global::Gtk.Action ("FileAction", global::Mono.Unix.Catalog.GetString ("File"), null, null);
+		this.FileAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("File");
+		w1.Add (this.FileAction, null);
+		this.AboutAction = new global::Gtk.Action ("AboutAction", global::Mono.Unix.Catalog.GetString ("About"), null, null);
+		this.AboutAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("About");
+		w1.Add (this.AboutAction, null);
+		this.FileAction1 = new global::Gtk.Action ("FileAction1", global::Mono.Unix.Catalog.GetString ("File"), null, null);
+		this.FileAction1.ShortLabel = global::Mono.Unix.Catalog.GetString ("File");
+		w1.Add (this.FileAction1, null);
+		this.HelpAction = new global::Gtk.Action ("HelpAction", global::Mono.Unix.Catalog.GetString ("Help"), null, null);
+		this.HelpAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Help");
+		w1.Add (this.HelpAction, null);
+		this.floppyAction = new global::Gtk.Action ("floppyAction", global::Mono.Unix.Catalog.GetString ("Save request body"), null, "gtk-floppy");
+		this.floppyAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Save request body");
+		w1.Add (this.floppyAction, "<Primary><Mod2>r");
+		this.floppyAction1 = new global::Gtk.Action ("floppyAction1", global::Mono.Unix.Catalog.GetString ("Save response body"), null, "gtk-floppy");
+		this.floppyAction1.ShortLabel = global::Mono.Unix.Catalog.GetString ("Save response body");
+		w1.Add (this.floppyAction1, "<Primary><Mod2>s");
+		this.AboutAction1 = new global::Gtk.Action ("AboutAction1", global::Mono.Unix.Catalog.GetString ("About"), null, null);
+		this.AboutAction1.ShortLabel = global::Mono.Unix.Catalog.GetString ("About");
+		w1.Add (this.AboutAction1, null);
+		this.quitAction = new global::Gtk.Action ("quitAction", global::Mono.Unix.Catalog.GetString ("Quit"), null, "gtk-quit");
+		this.quitAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Exit");
+		w1.Add (this.quitAction, null);
+		this.helpAction = new global::Gtk.Action ("helpAction", global::Mono.Unix.Catalog.GetString ("About"), null, "gtk-help");
+		this.helpAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("About");
+		w1.Add (this.helpAction, null);
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -36,7 +72,7 @@ public partial class MainWindow
 		this.vbox1.Name = "vbox1";
 		this.vbox1.Spacing = 6;
 		// Container child vbox1.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu/><menu/><menu/></menubar></ui>");
+		this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='FileAction1' action='FileAction1'><menuitem name='floppyAction' action='floppyAction'/><menuitem name='floppyAction1' action='floppyAction1'/><menuitem name='quitAction' action='quitAction'/></menu><menu name='HelpAction' action='HelpAction'><menuitem name='helpAction' action='helpAction'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add (this.menubar1);
@@ -115,5 +151,9 @@ public partial class MainWindow
 		}
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
+		this.floppyAction.Activated += new global::System.EventHandler (this.OnSaveRequestBodyActionActivated);
+		this.floppyAction1.Activated += new global::System.EventHandler (this.OnSaveResponseBodyActionActivated);
+		this.quitAction.Activated += new global::System.EventHandler (this.OnQuitActionActivated);
+		this.helpAction.Activated += new global::System.EventHandler (this.OnAboutActionActivated);
 	}
 }
