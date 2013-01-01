@@ -181,14 +181,14 @@ public partial class MainWindow: Gtk.Window
 		Tcp_packets_holder.Pairs.OnNewResponse += (pair) => 
 		{
 			var response = pair.Response;
-			if(response.Headers_String != null)
+			if(response.First_Line != null)
 			{
 				OnResponseReady(pair);
 			}
 
 			response.OnBytesAdded += () => 
 			{
-				if(response.Headers_String != null)
+				if(response.First_Line != null)
 				{
 					OnResponseReady(pair);
 				}

@@ -49,8 +49,7 @@ namespace pcap
 			}
 
 			bool is_new = false;
-
-			if(Headers == null)
+			if(First_Line == null)
 				is_new = true;
 
 			string text = Encoding.UTF8.GetString (bytes.ToArray());
@@ -90,10 +89,14 @@ namespace pcap
 					WorkOnChunk(Body_Bytes.ToArray());
 				}
 			}
+			else
+			{
+				First_Line = headers;
+			}
 
-			if(Headers != null && IsRequest && is_new)
+			if(IsRequest && is_new)
 				RaiseNewRequest();
-			if(Headers != null && !IsRequest && is_new)
+			if(!IsRequest && is_new)
 				RaiseNewResponse();
 
 			if(Packets_added)
@@ -412,7 +415,10 @@ namespace pcap
 		public string Unzipped_Body 
 		{
 			get
-			{				
+			{
+				if(Body_Bytes == null)
+					return null;
+
 				if(Zipping == Zipping.Gzip)
 				{
 					return  Utils.UnGZip(Body_Bytes.ToArray(), Enc);
@@ -434,6 +440,9 @@ namespace pcap
 		{
 			get
 			{
+				if(Body_Bytes == null)
+					return null;
+
 				if(_last_length == Body_Bytes.Count())
 					return _cached_string;
 
