@@ -74,17 +74,21 @@ namespace pcap
 				IsRequest = false;
 			}
 
-			First_Line = headers.Substring (0, headers.IndexOf ("\r"));
-			Headers_String = headers.Substring (headers.IndexOf ("\n") + 1);
-			int headers_size = System.Text.Encoding.UTF8.GetBytes (headers + "\r\n\r\n").Length;
-			Body_Bytes = new List<byte> (bytes.Skip (headers_size));
-
-			if(Length > Utils.MaxSizeInBytes)
-				Body_Bytes = new List<byte>(Enc.GetBytes("***Catcher: body with size greater than 5 Mb is not captured***"));
-
-			if(IsChunked && !_is_chunked_completed)
+			if(headers.IndexOf ("\r") != -1)
 			{
-				WorkOnChunk(Body_Bytes.ToArray());
+				First_Line = headers.Substring (0, headers.IndexOf ("\r"));			
+
+				Headers_String = headers.Substring (headers.IndexOf ("\n") + 1);
+				int headers_size = System.Text.Encoding.UTF8.GetBytes (headers + "\r\n\r\n").Length;
+				Body_Bytes = new List<byte> (bytes.Skip (headers_size));
+
+				if(Length > Utils.MaxSizeInBytes)
+					Body_Bytes = new List<byte>(Enc.GetBytes("***Catcher: body with size greater than 5 Mb is not captured***"));
+
+				if(IsChunked && !_is_chunked_completed)
+				{
+					WorkOnChunk(Body_Bytes.ToArray());
+				}
 			}
 
 			if(Headers != null && IsRequest && is_new)
