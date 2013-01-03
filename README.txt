@@ -1,3 +1,5 @@
+=====Linux=====
+
 Catcher - http packet viewer for linux. Written in C#, requires mono (>= 2.8). 
 Uses SharpPcap library, you need to have >= libpcap0.8 and libpcap0.8-dev installed too.
 Run from binaries folder with root privileges: 'sudo mono catcher.exe', until I (or you) figure out how to sniff without root. 
@@ -8,3 +10,11 @@ Another problem is difficulty to decrypt SSL packets (man in the middle is not a
 sized http data (<= 2 Mb or so).
 
 The source project created in MonoDevelop 3.0.5.
+
+
+====Windows====
+
+It turns out it works on windows! You'll .net 4.0, gtk# for .net (http://www.go-mono.com/mono-downloads/download.html) and
+winpcap library (http://www.winpcap.org/). Once these installed run catcher.exe from windows_binaries folder.
+
+Source project is opened by visual studio flawlessly.
