@@ -14,7 +14,7 @@ The source project created in MonoDevelop 3.0.5.
 
 ====Windows====
 
-It turns out it works on windows! You'll .net 4.0, gtk# for .net (http://www.go-mono.com/mono-downloads/download.html) and
+It turns out it works on windows! You'll need .net 4.0, gtk# for .net (http://www.go-mono.com/mono-downloads/download.html) and
 winpcap library (http://www.winpcap.org/). Once these installed run catcher.exe from windows_binaries folder.
 
 Source project is opened by visual studio flawlessly.
