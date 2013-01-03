@@ -13,6 +13,9 @@ public partial class MainWindow
 	private global::Gtk.Action AboutAction1;
 	private global::Gtk.Action quitAction;
 	private global::Gtk.Action helpAction;
+	private global::Gtk.Action DevicesAction;
+	private global::Gtk.Action StatisticsAction;
+	private global::Gtk.Action indexAction;
 	private global::Gtk.VBox vbox1;
 	private global::Gtk.MenuBar menubar1;
 	private global::Gtk.HPaned hpaned1;
@@ -58,6 +61,15 @@ public partial class MainWindow
 		this.helpAction = new global::Gtk.Action ("helpAction", global::Mono.Unix.Catalog.GetString ("About"), null, "gtk-help");
 		this.helpAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("About");
 		w1.Add (this.helpAction, null);
+		this.DevicesAction = new global::Gtk.Action ("DevicesAction", global::Mono.Unix.Catalog.GetString ("Devices"), null, null);
+		this.DevicesAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Devices");
+		w1.Add (this.DevicesAction, null);
+		this.StatisticsAction = new global::Gtk.Action ("StatisticsAction", global::Mono.Unix.Catalog.GetString ("Statistics"), null, null);
+		this.StatisticsAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Statistics");
+		w1.Add (this.StatisticsAction, null);
+		this.indexAction = new global::Gtk.Action ("indexAction", global::Mono.Unix.Catalog.GetString ("Statistics"), null, "gtk-index");
+		this.indexAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Statistics");
+		w1.Add (this.indexAction, "<Primary><Mod2>t");
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -72,7 +84,7 @@ public partial class MainWindow
 		this.vbox1.Name = "vbox1";
 		this.vbox1.Spacing = 6;
 		// Container child vbox1.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='FileAction1' action='FileAction1'><menuitem name='floppyAction' action='floppyAction'/><menuitem name='floppyAction1' action='floppyAction1'/><menuitem name='quitAction' action='quitAction'/></menu><menu name='HelpAction' action='HelpAction'><menuitem name='helpAction' action='helpAction'/></menu></menubar></ui>");
+		this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='FileAction1' action='FileAction1'><menuitem name='floppyAction' action='floppyAction'/><menuitem name='floppyAction1' action='floppyAction1'/><menuitem name='quitAction' action='quitAction'/></menu><menu name='HelpAction' action='HelpAction'><menuitem name='indexAction' action='indexAction'/><menuitem name='helpAction' action='helpAction'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add (this.menubar1);
@@ -155,5 +167,6 @@ public partial class MainWindow
 		this.floppyAction1.Activated += new global::System.EventHandler (this.OnSaveResponseBodyActionActivated);
 		this.quitAction.Activated += new global::System.EventHandler (this.OnQuitActionActivated);
 		this.helpAction.Activated += new global::System.EventHandler (this.OnAboutActionActivated);
+		this.indexAction.Activated += new global::System.EventHandler (this.OnIndexActionActivated);
 	}
 }

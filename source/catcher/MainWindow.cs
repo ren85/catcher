@@ -156,10 +156,35 @@ public partial class MainWindow: Gtk.Window
 		get;
 		set;
 	}
+	System.Timers.Timer timer {get; set;}
 	void StartCapturing()
 	{
+		int saved = GetSavedDevice();
 		capture = new Capturing ();
-		Tcp_packets_holder.Pairs.OnNewRequest += (pair) => 
+		var menu_item = new MenuItem("Devices");
+		menubar1.Insert(menu_item, 1);
+		var submenu = new Menu();
+		menu_item.Submenu = submenu;
+		List<Tuple<MenuItem, DeviceInfo>> map = new List<Tuple<MenuItem, DeviceInfo>>();
+		foreach(var d in capture.GetDevices())
+		{
+			MenuItem md = new MenuItem(d.Name);
+			if(d.Number == saved)
+				statusbar1.Push(0, "Sniffing on: " + d.Name);
+			map.Add(new Tuple<MenuItem, DeviceInfo>(md, d));
+			md.Activated += (sender, e) => 
+			{
+				var di = map.Single(f => f.Item1 == sender as MenuItem).Item2;
+				statusbar1.Push(0, "Sniffing on: " + di.Name);
+				t.Abort();
+				t = new Thread(f => StartCapturingOnANewThread(di.Number));
+				t.Start();
+				SaveDevice(di.Number);
+			};
+			submenu.Append(md);
+		}
+		menu_item.ShowAll();
+		Tcp_packets_holder.Pairs.OnNewRequest += (pair) =>
 		{
 			var request = pair.Request;
 			ItemModel item = new ItemModel()
@@ -202,7 +227,7 @@ public partial class MainWindow: Gtk.Window
 				}
 			};	
 		};
-		catcher.Utils.SetInterval(() => {
+		timer = catcher.Utils.SetInterval(() => {
 			lock(_lock)
 			{
 				if(undisplayed_counter > 0)
@@ -213,10 +238,38 @@ public partial class MainWindow: Gtk.Window
 				}
 			}
 		}, 500);
-		t = new Thread(f => StartCapturingOnANewThread());
+
+		t = new Thread(f => StartCapturingOnANewThread(saved));
 		t.Start();
+
+
 	}
 
+	void StartSniffingDevice(int device)
+	{
+		capture.StopCapturing();
+		capture.StartCapturing(device);
+	}
+
+	int GetSavedDevice()
+	{
+		int device = 0;
+		if(File.Exists("params.txt"))
+		{
+			var p = new List<string>(File.ReadAllLines("params.txt"));
+			var d = p.FirstOrDefault(f => f.Trim().ToLower().StartsWith("device_number"));
+			if(d != null)
+				device = Convert.ToInt32(d.Split(new string[] {"=>"}, StringSplitOptions.RemoveEmptyEntries)[1]);
+		}
+		return device;
+	}
+	void SaveDevice(int device)
+	{
+		using(TextWriter tw = new StreamWriter("params.txt"))
+		{
+			tw.WriteLine("device_number => {0}", device);
+		}
+	}
 	void OnResponseReady (Pair pair)
 	{
 		lock (_lock) 
@@ -249,19 +302,11 @@ public partial class MainWindow: Gtk.Window
 		}
 	}
 
-	public void StartCapturingOnANewThread ()
+	public void StartCapturingOnANewThread (int device)
 	{
 		try 
 		{
-			int device = 0;
-			if(File.Exists("params.txt"))
-			{
-				var p = new List<string>(File.ReadAllLines("params.txt"));
-				var d = p.FirstOrDefault(f => f.Trim().ToLower().StartsWith("device_number"));
-				if(d != null)
-					device = Convert.ToInt32(d.Split(new string[] {"=>"}, StringSplitOptions.RemoveEmptyEntries)[1]);
-			}
-			capture.StartCapturing(device);
+			StartSniffingDevice(device);
 		} 
 		catch (Exception ex) 
 		{
@@ -369,5 +414,14 @@ public partial class MainWindow: Gtk.Window
 	protected void OnQuitActionActivated (object sender, EventArgs e)
 	{
 		Exit();
+	}
+
+
+	protected void OnIndexActionActivated (object sender, EventArgs e)
+	{
+		MessageDialog md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Close, capture.GetStatistics());
+		md.Title = "Statistics";
+		md.Run();
+		md.Destroy();
 	}
 }

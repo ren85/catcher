@@ -6,7 +6,7 @@
   </configuration>
   <import>
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <widget-library name="../bin/Debug/catcher.exe" internal="true" />
+    <widget-library name="../bin/Release/catcher.exe" internal="true" />
   </import>
   <icon-factory>
     <icon-set id="question">
@@ -82,6 +82,24 @@
         <property name="StockId">gtk-help</property>
         <signal name="Activated" handler="OnAboutActionActivated" after="yes" />
       </action>
+      <action id="DevicesAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Devices</property>
+        <property name="ShortLabel" translatable="yes">Devices</property>
+      </action>
+      <action id="StatisticsAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Statistics</property>
+        <property name="ShortLabel" translatable="yes">Statistics</property>
+      </action>
+      <action id="indexAction">
+        <property name="Type">Action</property>
+        <property name="Accelerator">&lt;Primary&gt;&lt;Mod2&gt;t</property>
+        <property name="Label" translatable="yes">Statistics</property>
+        <property name="ShortLabel" translatable="yes">Statistics</property>
+        <property name="StockId">gtk-index</property>
+        <signal name="Activated" handler="OnIndexActionActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">Catcher</property>
@@ -105,6 +123,7 @@
                 <node type="Menuitem" action="quitAction" />
               </node>
               <node type="Menu" action="HelpAction">
+                <node type="Menuitem" action="indexAction" />
                 <node type="Menuitem" action="helpAction" />
               </node>
             </node>

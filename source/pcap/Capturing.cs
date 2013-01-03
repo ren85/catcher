@@ -10,18 +10,35 @@ using System.Threading;
 
 namespace pcap
 {
+	public class DeviceInfo
+	{
+		public string Name { get; set; }
+		public int Number { get; set; }
+	}
     public partial class Capturing
     {
 
 
 		ICaptureDevice device = null;
+		CaptureDeviceList devices { get; set; }
+		public Capturing()
+		{
+			// Retrieve the device list
+			devices = CaptureDeviceList.Instance;
+		}
+		public List<DeviceInfo> GetDevices()
+		{
+			List<DeviceInfo> res = new List<DeviceInfo>();
+			int counter = 0;
+			foreach(var d in devices)
+			{
+				res.Add(new DeviceInfo() { Name = d.Name + (string.IsNullOrEmpty(d.Description) ? "" : " ("+d.Description+")"), Number = counter});
+				counter++;
+			}
+			return res;
+		}
 		public void StartCapturing(int device_choice)
-		{			
-
-
-            // Retrieve the device list
-            var devices = CaptureDeviceList.Instance;
-
+		{
             // If no devices were found print an error
             if(devices.Count < 1)
             {
@@ -43,9 +60,20 @@ namespace pcap
 		public void StopCapturing ()
 		{
 			if(device != null)
+			{
+				device.StopCapture();
 				device.Close();
+				device = null;
+			}
 		}
 
+		public string GetStatistics()
+		{
+			if(device == null)
+				return "";
+
+			return string.Format("Received packets: {0}, dropped packets: {1}, interface dropped packets: {2}", device.Statistics.ReceivedPackets, device.Statistics.DroppedPackets, device.Statistics.InterfaceDroppedPackets);
+		}
         
 		private static void device_OnPacketArrival(object sender, CaptureEventArgs e)
         {

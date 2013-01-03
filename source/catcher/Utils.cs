@@ -4,7 +4,7 @@ namespace catcher
 {
 	public class Utils
 	{
-		public static IDisposable SetInterval(Action method, int delayInMilliseconds)
+		public static System.Timers.Timer SetInterval(Action method, int delayInMilliseconds)
 		{
 			System.Timers.Timer timer = new System.Timers.Timer(delayInMilliseconds);
 			timer.Elapsed += (source, e) =>
@@ -17,10 +17,10 @@ namespace catcher
 			
 			// Returns a stop handle which can be used for stopping
 			// the timer, if required
-			return timer as IDisposable;
+			return timer;
 		}
 		
-		public static IDisposable SetTimeout(Action method, int delayInMilliseconds)
+		public static System.Timers.Timer SetTimeout(Action method, int delayInMilliseconds)
 		{
 			System.Timers.Timer timer = new System.Timers.Timer(delayInMilliseconds);
 			timer.Elapsed += (source, e) =>
@@ -34,7 +34,7 @@ namespace catcher
 			
 			// Returns a stop handle which can be used for stopping
 			// the timer, if required
-			return timer as IDisposable;
+			return timer;
 		}
 	}
 }

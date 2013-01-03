@@ -1,17 +1,17 @@
 ﻿<Properties GitUserInfo="UsingGIT">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="pcap/PacketHolder.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="catcher/MainWindow.cs">
     <Files>
-      <File FileName="pcap/ListOfPairs.cs" Line="20" Column="4" />
-      <File FileName="pcap/PacketHolder.cs" Line="52" Column="51" />
-      <File FileName="pcap/Request.cs" Line="452" Column="14" />
-      <File FileName="pcap/Capturing.cs" Line="24" Column="4" />
+      <File FileName="pcap/ListOfPairs.cs" Line="12" Column="47" />
+      <File FileName="pcap/PacketHolder.cs" Line="57" Column="28" />
+      <File FileName="pcap/Request.cs" Line="462" Column="19" />
+      <File FileName="pcap/Capturing.cs" Line="75" Column="216" />
       <File FileName="pcap/Utils.cs" Line="28" Column="55" />
-      <File FileName="catcher/MainWindow.cs" Line="61" Column="2" />
-      <File FileName="catcher/Utils.cs" Line="7" Column="3" />
+      <File FileName="catcher/MainWindow.cs" Line="250" Column="27" />
+      <File FileName="catcher/Utils.cs" Line="37" Column="16" />
       <File FileName="pcap/Capturing_api.cs" Line="38" Column="2" />
       <File FileName="catcher/ListView.cs" Line="96" Column="3" />
-      <File FileName="catcher/gtk-gui/MainWindow.cs" Line="64" Column="58" />
+      <File FileName="catcher/Main.cs" Line="15" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
