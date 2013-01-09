@@ -73,6 +73,12 @@ namespace pcap
 						}
 						else if (s.StartsWith ("HTTP"))
 						{
+							if(s.IndexOf('\n') != -1)
+							{
+								var line = s.Substring(0, s.IndexOf('\n'));
+								if(line.ToLower().Contains("100 continue"))
+									continue;
+							}
 							var en = new Entity()
 							{
 								IpInfo = new IpInfo()
