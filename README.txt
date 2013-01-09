@@ -8,7 +8,9 @@ Unlike fiddler and like wireshark catcher doesn't act as proxy: no packets go th
 instead it passively captures tcp packets flying by and tries to assemble http data. 
 The problem with this is some packets are going to be lost even when capture is handled correctly.
 Another problem is difficulty to decrypt SSL packets (man in the middle is not applicable). 
-But it seem to work fine with small/medium sized http data (<= 2 Mb or so).
+But it seem to work fine with small/medium sized http data (<= 2 Mb or so) and on a bright side you see all
+http packets travelling through selected interface and not just from a given application.
+If you want to catch packets going through localhost or 127.0.0.1 select loopback interface from devices menu.
 
 The source project created in MonoDevelop 3.0.5.
 
