@@ -26,12 +26,12 @@ Source project is opened by visual studio flawlessly.
 ====Mac====
 
 Should work on a mac in theory, although I haven't tried that. Steps:
-    *get libpcap
-    *get mono and gtk# for mac
-    *get monodevelop for mac
-    *get sources from here and open it in monodevelop
-    *compile
-    *it should work (maybe with sudo) 
+    * get libpcap
+    * get mono and gtk# for mac
+    * get monodevelop for mac
+    * get sources from here and open it in monodevelop
+    * compile
+    * it should work (maybe with sudo) 
 
 
 Please give feedback here on github or at http://rextester.com/feedback (questions are welcome too).
