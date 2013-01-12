@@ -35,3 +35,5 @@ Should work on a mac in theory, although I haven't tried that. Steps:
 
 
 Please give feedback here on github or at http://rextester.com/feedback (questions are welcome too).
+
+![Catcher on ubuntu](/catcher.png "Catcher on ubuntu")
