@@ -37,6 +37,8 @@ namespace pcap
 			{
 				while(true)
 				{
+
+
 					Working_copy = new List<Packet>();
 					lock(_lock)
 					{

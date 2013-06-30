@@ -32,6 +32,7 @@ namespace pcap
 		//this is not incremental, i.e. same work must be redone every time (every 0.5 sec) while request/response is not finished
 		public void DoWorkOnPackets ()
 		{
+	
 			if(IsChunked && _is_chunked_failed)
 			{
 				Packets_added = false;
@@ -47,6 +48,8 @@ namespace pcap
 				
 				bytes.AddRange (Tcp_packets[i].Packet.PayloadData);
 			}
+
+
 
 			bool is_new = false;
 			if(First_Line == null)
@@ -94,6 +97,7 @@ namespace pcap
 				First_Line = headers;
 			}
 
+
 			if(IsRequest && is_new)
 				RaiseNewRequest();
 			if(!IsRequest && is_new)
@@ -103,6 +107,8 @@ namespace pcap
 				RaiseBytesAdded();
 
 			Packets_added = false;
+
+
 		}
 		public delegate void BytesAddedDelegate();
 		public event BytesAddedDelegate OnBytesAdded;

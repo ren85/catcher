@@ -8,6 +8,16 @@ namespace pcap
 {
 	public class Utils
 	{
+		
+        private static readonly object globalLock = new object();
+        private static readonly Random globalRandom = new Random();
+		public static Random GetTrulyRandom()
+        {
+            lock (globalLock)
+            {
+                return new Random(globalRandom.Next());
+            }
+        }
 		public static int MaxSizeInBytes = 5242880;
 		public static string UnGZip(byte[] byteArray, Encoding Enc)
 		{

@@ -116,7 +116,7 @@
         <child>
           <widget class="Gtk.MenuBar" id="menubar1">
             <property name="MemberName" />
-            <node name="__gtksharp_118_Stetic_Editor_ActionMenuBar" type="Menubar">
+            <node name="menubar1" type="Menubar">
               <node type="Menu" action="FileAction1">
                 <node type="Menuitem" action="floppyAction" />
                 <node type="Menuitem" action="floppyAction1" />

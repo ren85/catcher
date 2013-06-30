@@ -1,7 +1,7 @@
 =====Linux=====
 
 Catcher - http packet viewer for linux. Written in C#, requires mono (>= 2.8). 
-Uses SharpPcap library, you need to have >= libpcap0.8 (and -dev package) installed too. Although it may work with lower versions too.
+Uses SharpPcap library, you need to have >= libpcap0.8 installed too. Although it may work with lower versions too.
 Run from binaries folder with root privileges: 'sudo mono catcher.exe', until I (or you) figure out how to sniff without root. 
 
 Unlike fiddler and like wireshark catcher doesn't act as proxy: no packets go through it, 

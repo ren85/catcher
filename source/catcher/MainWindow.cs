@@ -227,7 +227,7 @@ public partial class MainWindow: Gtk.Window
 				}
 			};	
 		};
-		timer = catcher.Utils.SetInterval(() => {
+		catcher.Utils.SetInterval(() => {
 			lock(_lock)
 			{
 				if(undisplayed_counter > 0)
@@ -238,6 +238,7 @@ public partial class MainWindow: Gtk.Window
 				}
 			}
 		}, 500);
+
 
 		t = new Thread(f => StartCapturingOnANewThread(saved));
 		t.Start();

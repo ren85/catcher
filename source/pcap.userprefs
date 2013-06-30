@@ -1,13 +1,13 @@
 ﻿<Properties GitUserInfo="UsingGIT">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="pcap/PacketHolder.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="pcap/Request.cs">
     <Files>
       <File FileName="pcap/ListOfPairs.cs" Line="12" Column="47" />
-      <File FileName="pcap/PacketHolder.cs" Line="81" Column="9" />
-      <File FileName="pcap/Request.cs" Line="462" Column="19" />
-      <File FileName="pcap/Capturing.cs" Line="75" Column="216" />
-      <File FileName="pcap/Utils.cs" Line="28" Column="55" />
-      <File FileName="catcher/MainWindow.cs" Line="301" Column="3" />
+      <File FileName="pcap/PacketHolder.cs" Line="185" Column="22" />
+      <File FileName="pcap/Request.cs" Line="118" Column="74" />
+      <File FileName="pcap/Capturing.cs" Line="39" Column="4" />
+      <File FileName="pcap/Utils.cs" Line="20" Column="10" />
+      <File FileName="catcher/MainWindow.cs" Line="294" Column="6" />
       <File FileName="catcher/Utils.cs" Line="37" Column="16" />
       <File FileName="pcap/Capturing_api.cs" Line="38" Column="2" />
       <File FileName="catcher/ListView.cs" Line="96" Column="3" />
@@ -16,8 +16,10 @@
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="catcher" expanded="True" selected="True" />
-          <Node name="pcap" expanded="True" />
+          <Node name="catcher" expanded="True" />
+          <Node name="pcap" expanded="True">
+            <Node name="Request.cs" selected="True" />
+          </Node>
         </State>
       </Pad>
       <Pad Id="ClassPad">
